@@ -69,11 +69,26 @@ function quotePayload(input) {
     address: cleanText(input.address, 180),
     city: cleanText(input.city, 80),
     services,
+    quantity: cleanText(input.quantity, 40),
+    squareFeet: cleanText(input.squareFeet, 20),
+    frequency: cleanText(input.frequency, 40),
+    serviceWindow: cleanText(input.serviceWindow, 120),
     message: cleanText(input.message, 2000),
-    source: cleanText(input.source, 50) || "website",
+    source: cleanText(input.source, 120) || "website",
     consent: input.consent === true,
     companyWebsite: cleanText(input.companyWebsite, 200),
   };
+}
+
+function deliveryMessage(quote) {
+  const details = [
+    quote.quantity && `Units or equipment: ${quote.quantity}`,
+    quote.squareFeet && `Approximate square feet: ${quote.squareFeet}`,
+    quote.frequency && `Service plan: ${quote.frequency}`,
+    quote.serviceWindow && `Preferred service window: ${quote.serviceWindow}`,
+    quote.message && `Customer notes: ${quote.message}`,
+  ].filter(Boolean);
+  return details.join("\n");
 }
 
 function validateQuote(quote) {
@@ -134,7 +149,7 @@ async function saveToSupabase(quote) {
       address: quote.address || null,
       city: quote.city || null,
       services: quote.services,
-      message: quote.message || null,
+      message: deliveryMessage(quote) || null,
       source: quote.source === "website" ? "website" : `website:${quote.source}`,
     }),
     signal: AbortSignal.timeout(10000),
@@ -149,7 +164,7 @@ async function saveToUpstream(quote) {
   const response = await fetch(upstream, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ name: quote.name, phone: quote.phone, email: quote.email, address: quote.address, city: quote.city, services: quote.services, message: quote.message }),
+    body: JSON.stringify({ name: quote.name, phone: quote.phone, email: quote.email, address: quote.address, city: quote.city, services: quote.services, message: deliveryMessage(quote) }),
     signal: AbortSignal.timeout(10000),
   });
   if (!response.ok) throw new Error(`UPSTREAM_${response.status}`);
@@ -166,7 +181,7 @@ async function sendNotification(quote, requestId) {
   const from = process.env.QUOTE_NOTIFICATION_FROM;
   if (!apiKey || !to || !from) return { configured: false };
   const rows = [
-    ["Name", quote.name], ["Phone", quote.phone], ["Email", quote.email || "Not provided"], ["Address", quote.address || "Not provided"], ["City", quote.city || "Not provided"], ["Services", quote.services.join(", ") || "Not selected"], ["Message", quote.message || "Not provided"], ["Source", quote.source], ["Request", requestId],
+    ["Name", quote.name], ["Phone", quote.phone], ["Email", quote.email || "Not provided"], ["Address", quote.address || "Not provided"], ["City", quote.city || "Not provided"], ["Services", quote.services.join(", ") || "Not selected"], ["Units or equipment", quote.quantity || "Not provided"], ["Approximate square feet", quote.squareFeet || "Not provided"], ["Service plan", quote.frequency || "Not provided"], ["Preferred window", quote.serviceWindow || "Not provided"], ["Message", quote.message || "Not provided"], ["Source", quote.source], ["Request", requestId],
   ];
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",

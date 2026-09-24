@@ -1,7 +1,7 @@
 import { cp, mkdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { homePage, servicesPage, servicePage, pricingPage, workPage, serviceAreasPage, areaLandingPage, guidesPage, guidePage, quotePage, privacyPage, notFoundPage } from "../src/pages.mjs";
+import { homePage, servicesPage, servicePage, pricingPage, workPage, serviceAreasPage, areaLandingPage, guidesPage, guidePage, quotePage, reviewPage, privacyPage, notFoundPage } from "../src/pages.mjs";
 import { services, areaLandingPages, guides, site } from "../src/site.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
@@ -19,6 +19,7 @@ const pages = new Map([
   ["/service-areas/", serviceAreasPage()],
   ["/guides/", guidesPage()],
   ["/quote/", quotePage()],
+  ["/review/", reviewPage()],
   ["/privacy/", privacyPage()],
   ["/404/", notFoundPage()],
 ]);
@@ -33,7 +34,7 @@ for (const [route, html] of pages) {
   await writeFile(file, html);
 }
 
-const sitemapRoutes = [...pages.keys()].filter((route) => route !== "/404/");
+const sitemapRoutes = [...pages.keys()].filter((route) => route !== "/404/" && route !== "/review/");
 const lastModified = "2026-09-24";
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

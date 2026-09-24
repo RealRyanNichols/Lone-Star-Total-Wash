@@ -226,6 +226,23 @@ tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
 .rate-grid dt { color: #c9d6df; font-size: .85rem; }
 .rate-grid dd { margin: 0; color: #fff; font-weight: 900; }
 .rate-card__tag { display: inline-block; padding: .25rem .55rem; margin-bottom: .8rem; border-radius: 999px; color: #fff; background: var(--red); font-size: .67rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+.budget-grid { display: grid; gap: 1rem; }
+.budget-card { display: grid; padding: clamp(1.25rem, 3vw, 2rem); gap: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: #fff; box-shadow: 0 12px 28px rgba(6,31,54,.06); }
+.budget-card h3 { font-size: 1.55rem; }
+.budget-card label { display: grid; gap: .4rem; }
+.budget-card label > span { color: var(--navy); font-size: .78rem; font-weight: 900; }
+.budget-card input, .budget-card select { width: 100%; padding: .75rem .85rem; border: 1px solid #bdc6cc; border-radius: .6rem; color: var(--ink); background: #fff; }
+.budget-card input:focus, .budget-card select:focus { outline: 3px solid rgba(29,115,184,.18); border-color: var(--blue); }
+.budget-card--dark { color: #fff; border-color: var(--navy); background: var(--navy); }
+.budget-card--dark h3, .budget-card--dark label > span { color: #fff; }
+.budget-result { display: grid; padding: 1rem; gap: .2rem; border-radius: .75rem; background: var(--cream); }
+.budget-result span { color: var(--muted); font-size: .7rem; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
+.budget-result strong { color: var(--navy); font-size: 2rem; line-height: 1.1; }
+.budget-result small { color: var(--muted); }
+.budget-card--dark .budget-result { background: rgba(255,255,255,.1); }
+.budget-card--dark .budget-result span, .budget-card--dark .budget-result small { color: #c9d6df; }
+.budget-card--dark .budget-result strong { color: #fff; }
+.calculator-note { max-width: 850px; margin: 1rem auto 0; color: var(--muted); font-size: .75rem; text-align: center; }
 
 .area-grid { display: grid; gap: 1rem; }
 .area-grid article { padding: 1.5rem; border: 1px solid var(--line); border-radius: 1rem; background: #fff; box-shadow: 0 12px 28px rgba(6,31,54,.06); }
@@ -257,10 +274,16 @@ tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
 .quote-form label, .quote-form fieldset { display: grid; gap: .4rem; margin: 0 0 1.1rem; }
 .quote-form label > span, .quote-form legend { color: var(--navy); font-size: .82rem; font-weight: 900; }
 .quote-form em { color: var(--red); font-size: .68rem; font-style: normal; text-transform: uppercase; }
-.quote-form input, .quote-form textarea { width: 100%; padding: .75rem .85rem; border: 1px solid #bdc6cc; border-radius: .6rem; color: var(--ink); background: #fff; }
-.quote-form input:focus, .quote-form textarea:focus { outline: 3px solid rgba(29,115,184,.18); border-color: var(--blue); }
+.quote-form input, .quote-form select, .quote-form textarea { width: 100%; padding: .75rem .85rem; border: 1px solid #bdc6cc; border-radius: .6rem; color: var(--ink); background: #fff; }
+.quote-form input:focus, .quote-form select:focus, .quote-form textarea:focus { outline: 3px solid rgba(29,115,184,.18); border-color: var(--blue); }
 .quote-form textarea { resize: vertical; }
 .form-grid { display: grid; gap: 1rem; }
+.form-step { display: flex; padding-top: .4rem; margin: 1.5rem 0 1rem; gap: .7rem; align-items: center; border-top: 1px solid var(--line); }
+.form-step:first-of-type { padding-top: 0; margin-top: 0; border-top: 0; }
+.form-step > span { display: grid; width: 32px; height: 32px; flex: 0 0 auto; place-items: center; border-radius: 50%; color: #fff; background: var(--red); font-size: .8rem; font-weight: 900; }
+.form-step strong, .form-step small { display: block; }
+.form-step strong { color: var(--navy); }
+.form-step small { color: var(--muted); }
 .quote-form fieldset { padding: 0; border: 0; }
 .checkbox-grid { display: grid; gap: .55rem; }
 .checkbox-grid label { display: flex; padding: .65rem .75rem; gap: .6rem; align-items: center; margin: 0; border: 1px solid var(--line); border-radius: .6rem; cursor: pointer; }
@@ -331,6 +354,7 @@ tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
   .service-hero { grid-template-columns: 1.05fr .95fr; }
   .detail-grid { grid-template-columns: 1.15fr .85fr; }
   .rate-grid { grid-template-columns: repeat(2, 1fr); }
+  .budget-grid { grid-template-columns: repeat(2, 1fr); }
   .area-grid { grid-template-columns: repeat(2, 1fr); }
   .guide-grid { grid-template-columns: repeat(3, 1fr); }
   .form-grid { grid-template-columns: repeat(2, 1fr); }

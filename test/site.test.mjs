@@ -83,7 +83,9 @@ test("build contains the search and conversion pages", async () => {
     "dist/service-areas/kilgore-tx/index.html",
     "dist/service-areas/tyler-tx/index.html",
     "dist/guides/index.html",
+    "dist/guides/fleet-washing-quote-checklist/index.html",
     "dist/quote/index.html",
+    "dist/review/index.html",
     "dist/sitemap.xml",
     "dist/robots.txt",
   ];
@@ -125,6 +127,13 @@ test("sitemap exposes current local landing pages with last-modified dates", asy
     assert.match(sitemap, new RegExp(`https://www\\.lonestartotalwash\\.com/service-areas/${city}/`));
   }
   assert.match(sitemap, /<lastmod>2026-09-24<\/lastmod>/);
+  assert.doesNotMatch(sitemap, /\/review\//);
+});
+
+test("review handoff uses the verified Google Maps listing without indexing the utility page", async () => {
+  const html = await readFile(new URL("../dist/review/index.html", import.meta.url), "utf8");
+  assert.match(html, /https:\/\/www\.google\.com\/maps\?cid=9079762650091003368/);
+  assert.match(html, /<meta name="robots" content="noindex,follow"/);
 });
 
 test("local landing pages contain service, breadcrumb, and FAQ structured data", async () => {
@@ -203,6 +212,9 @@ test("valid quote is delivered without raw contact data in the response", async 
       email: "test@example.com",
       city: "Hallsville",
       services: ["Fleet washing"],
+      quantity: "8 semis, 12 trailers",
+      frequency: "Recurring schedule",
+      serviceWindow: "Weekdays after 7 p.m.",
       message: "Test request only",
       consent: true,
       source: "test",
@@ -215,4 +227,8 @@ test("valid quote is delivered without raw contact data in the response", async 
   assert.equal(body.phone, undefined);
   assert.equal(forwardedQuote.phone, "903-555-0100");
   assert.deepEqual(forwardedQuote.services, ["Fleet washing"]);
+  assert.match(forwardedQuote.message, /Units or equipment: 8 semis, 12 trailers/);
+  assert.match(forwardedQuote.message, /Service plan: Recurring schedule/);
+  assert.match(forwardedQuote.message, /Preferred service window: Weekdays after 7 p\.m\./);
+  assert.match(forwardedQuote.message, /Customer notes: Test request only/);
 });

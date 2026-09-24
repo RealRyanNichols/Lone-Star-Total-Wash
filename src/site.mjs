@@ -5,6 +5,7 @@ export const site = {
   phoneHref: "+19034318489",
   facebook: "https://www.facebook.com/profile.php?id=61584723370422",
   tiktok: "https://www.tiktok.com/@lonestartotalwash",
+  googleMaps: "https://www.google.com/maps?cid=9079762650091003368",
   locality: "Hallsville",
   region: "TX",
   postalCode: "75650",
@@ -232,6 +233,12 @@ export const jobs = [
 ];
 
 export const guides = [
+  {
+    slug: "fleet-washing-quote-checklist",
+    title: "What to Send for a Faster Fleet-Washing Quote",
+    description: "The unit count, return-to-yard window, access details, and photos Travis needs to build a useful East Texas fleet-washing estimate.",
+    read: "4 min read",
+  },
   {
     slug: "how-often-should-a-commercial-fleet-be-washed",
     title: "How Often Should an East Texas Commercial Fleet Be Washed?",

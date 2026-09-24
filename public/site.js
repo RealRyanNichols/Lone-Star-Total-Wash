@@ -42,11 +42,74 @@ if (lightbox) {
   });
 }
 
+function formatCurrency(value) {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(value);
+}
+
+const fleetCalculator = document.querySelector("[data-fleet-calculator]");
+if (fleetCalculator) {
+  const type = fleetCalculator.querySelector("[data-fleet-type]");
+  const count = fleetCalculator.querySelector("[data-fleet-count]");
+  const total = fleetCalculator.querySelector("[data-fleet-total]");
+  const summary = fleetCalculator.querySelector("[data-fleet-summary]");
+  const quote = fleetCalculator.querySelector("[data-fleet-quote]");
+  const update = () => {
+    const units = Math.max(1, Math.min(500, Number.parseInt(count.value, 10) || 1));
+    const rate = Number(type.value) || 0;
+    const label = type.selectedOptions[0]?.dataset.label || "fleet units";
+    total.textContent = formatCurrency(rate * units);
+    summary.textContent = `${units.toLocaleString()} × ${label} at the published base rate`;
+    const params = new URLSearchParams({ service: "fleet-washing", quantity: `${units} ${label}` });
+    quote.href = `/quote/?${params.toString()}`;
+  };
+  type.addEventListener("change", update);
+  count.addEventListener("input", update);
+  update();
+}
+
+const flatworkCalculator = document.querySelector("[data-flatwork-calculator]");
+if (flatworkCalculator) {
+  const size = flatworkCalculator.querySelector("[data-flatwork-size]");
+  const frequency = flatworkCalculator.querySelector("[data-flatwork-frequency]");
+  const total = flatworkCalculator.querySelector("[data-flatwork-total]");
+  const summary = flatworkCalculator.querySelector("[data-flatwork-summary]");
+  const quote = flatworkCalculator.querySelector("[data-flatwork-quote]");
+  const update = () => {
+    const squareFeet = Math.max(1, Math.min(1000000, Number.parseInt(size.value, 10) || 1));
+    const recurring = frequency.value === "recurring";
+    const rate = squareFeet < 30000 ? (recurring ? 0.12 : 0.15) : squareFeet <= 100000 ? (recurring ? 0.10 : 0.12) : (recurring ? 0.08 : 0.10);
+    total.textContent = formatCurrency(squareFeet * rate);
+    summary.textContent = `${squareFeet.toLocaleString()} sq ft at ${Math.round(rate * 100)}¢ per sq ft`;
+    const params = new URLSearchParams({
+      service: "commercial-pressure-washing",
+      squareFeet: String(squareFeet),
+      frequency: recurring ? "Recurring schedule" : "One-time wash",
+    });
+    quote.href = `/quote/?${params.toString()}`;
+  };
+  size.addEventListener("input", update);
+  frequency.addEventListener("change", update);
+  update();
+}
+
 const quoteForm = document.querySelector("[data-quote-form]");
 if (quoteForm) {
   const city = quoteForm.querySelector("[data-city]");
-  const requestedCity = new URLSearchParams(window.location.search).get("city");
+  const params = new URLSearchParams(window.location.search);
+  const requestedCity = params.get("city");
   if (city && requestedCity) city.value = requestedCity.slice(0, 80);
+  const requestedService = params.get("service");
+  const service = requestedService ? quoteForm.querySelector(`[data-service="${CSS.escape(requestedService)}"]`) : null;
+  if (service) service.checked = true;
+  const quantity = quoteForm.querySelector("[data-quantity]");
+  const requestedQuantity = params.get("quantity");
+  if (quantity && requestedQuantity) quantity.value = requestedQuantity.slice(0, 40);
+  const squareFeet = quoteForm.querySelector("[data-square-feet]");
+  const requestedSquareFeet = params.get("squareFeet");
+  if (squareFeet && requestedSquareFeet && /^\d{1,7}$/.test(requestedSquareFeet)) squareFeet.value = requestedSquareFeet;
+  const frequency = quoteForm.querySelector("[data-frequency]");
+  const requestedFrequency = params.get("frequency");
+  if (frequency && [...frequency.options].some((option) => option.value === requestedFrequency)) frequency.value = requestedFrequency;
 
   quoteForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -58,7 +121,7 @@ if (quoteForm) {
     if (!quoteForm.reportValidity()) return;
 
     const data = new FormData(quoteForm);
-    const params = new URLSearchParams(window.location.search);
+    const tracking = [params.get("utm_source"), params.get("utm_medium"), params.get("utm_campaign")].filter(Boolean).join("|");
     const payload = {
       name: data.get("name"),
       phone: data.get("phone"),
@@ -66,10 +129,14 @@ if (quoteForm) {
       address: data.get("address"),
       city: data.get("city"),
       services: data.getAll("services"),
+      quantity: data.get("quantity"),
+      squareFeet: data.get("squareFeet"),
+      frequency: data.get("frequency"),
+      serviceWindow: data.get("serviceWindow"),
       message: data.get("message"),
       companyWebsite: data.get("companyWebsite"),
       consent: data.get("consent") === "on",
-      source: (params.get("utm_source") || "website").slice(0, 50),
+      source: (tracking || "website").slice(0, 120),
     };
 
     submit.disabled = true;
