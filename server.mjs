@@ -30,9 +30,12 @@ const mimeTypes = {
 const legacyRedirects = new Map([
   ["/index.html", "/"],
   ["/prices", "/pricing/"],
+  ["/prices/", "/pricing/"],
   ["/prices.html", "/pricing/"],
   ["/jobs", "/work/"],
+  ["/jobs/", "/work/"],
   ["/jobs.html", "/work/"],
+  ["/quote.html/", "/quote/"],
   ["/quote.html", "/quote/"],
 ]);
 

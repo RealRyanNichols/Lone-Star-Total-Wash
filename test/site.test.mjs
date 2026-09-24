@@ -121,9 +121,21 @@ test("generated internal links and media targets exist", async () => {
 });
 
 test("legacy public URLs redirect to their canonical replacements", async () => {
-  const response = await fetch(`${appUrl}/prices.html`, { redirect: "manual" });
-  assert.equal(response.status, 301);
-  assert.equal(response.headers.get("location"), "/pricing/");
+  const routes = new Map([
+    ["/prices", "/pricing/"],
+    ["/prices/", "/pricing/"],
+    ["/prices.html", "/pricing/"],
+    ["/jobs", "/work/"],
+    ["/jobs/", "/work/"],
+    ["/jobs.html", "/work/"],
+    ["/quote.html", "/quote/"],
+    ["/quote.html/", "/quote/"],
+  ]);
+  for (const [path, destination] of routes) {
+    const response = await fetch(`${appUrl}${path}`, { redirect: "manual" });
+    assert.equal(response.status, 301, path);
+    assert.equal(response.headers.get("location"), destination, path);
+  }
 });
 
 test("security headers are present on public pages", async () => {
