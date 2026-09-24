@@ -1,5 +1,7 @@
 import { site } from "./site.mjs";
 
+const assetVersion = "20260924.2";
+
 export function escapeHtml(value = "") {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -173,15 +175,15 @@ export function page({ title, description, path = "/", body, image = "/images/jo
   <meta name="twitter:description" content="${escapeHtml(description)}" />
   <meta name="twitter:image" content="${site.url}${image}" />
   <meta name="twitter:image:alt" content="${escapeHtml(imageAlt)}" />
-  <link rel="preload" href="/styles.css" as="style" />
-  <link rel="stylesheet" href="/styles.css" />
+  <link rel="preload" href="/styles.css?v=${assetVersion}" as="style" />
+  <link rel="stylesheet" href="/styles.css?v=${assetVersion}" />
   ${schemas.map((item) => `<script type="application/ld+json">${JSON.stringify(item).replaceAll("<", "\\u003c")}</script>`).join("\n  ")}
 </head>
 <body>
   ${header()}
   <main id="main">${body}</main>
   ${footer()}
-  <script src="/site.js" defer></script>
+  <script src="/site.js?v=${assetVersion}" defer></script>
 </body>
 </html>`;
 }

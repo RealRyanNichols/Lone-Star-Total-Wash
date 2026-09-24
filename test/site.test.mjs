@@ -98,6 +98,8 @@ test("homepage includes canonical metadata, local proof, and structured data", a
   assert.match(html, /Hallsville-based/);
   assert.match(html, /Mobile Fleet Washing/);
   assert.match(html, /application\/ld\+json/);
+  assert.match(html, /\/styles\.css\?v=20260924\.2/);
+  assert.match(html, /\/site\.js\?v=20260924\.2/);
   assert.doesNotMatch(html, /aggregateRating/);
 });
 
