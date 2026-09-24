@@ -77,6 +77,11 @@ test("build contains the search and conversion pages", async () => {
     "dist/pricing/index.html",
     "dist/work/index.html",
     "dist/service-areas/index.html",
+    "dist/service-areas/hallsville-tx/index.html",
+    "dist/service-areas/longview-tx/index.html",
+    "dist/service-areas/marshall-tx/index.html",
+    "dist/service-areas/kilgore-tx/index.html",
+    "dist/service-areas/tyler-tx/index.html",
     "dist/guides/index.html",
     "dist/quote/index.html",
     "dist/sitemap.xml",
@@ -102,7 +107,32 @@ test("every generated page has concise search metadata", async () => {
     const description = html.match(/<meta name="description" content="([^"]+)"/)?.[1] || "";
     assert.ok(title.length > 10 && title.length <= 60, `${file.pathname} title length is ${title.length}`);
     assert.ok(description.length >= 90 && description.length <= 160, `${file.pathname} description length is ${description.length}`);
+    assert.equal((html.match(/<h1(?:\s|>)/g) || []).length, 1, `${file.pathname} must have exactly one h1`);
+    assert.match(html, /<meta property="og:image:alt" content="[^"]+"/);
+    assert.match(html, /<meta name="twitter:image:alt" content="[^"]+"/);
+    assert.match(html, /<meta name="robots" content="(?:index,follow,max-image-preview:large|noindex,follow)"/);
+    for (const image of html.match(/<img\b[^>]*>/g) || []) {
+      assert.match(image, /\balt="[^"]*"/, `${file.pathname} image needs alt text`);
+      assert.match(image, /\bwidth="\d+"/, `${file.pathname} image needs width`);
+      assert.match(image, /\bheight="\d+"/, `${file.pathname} image needs height`);
+    }
   }
+});
+
+test("sitemap exposes current local landing pages with last-modified dates", async () => {
+  const sitemap = await readFile(new URL("../dist/sitemap.xml", import.meta.url), "utf8");
+  for (const city of ["hallsville-tx", "longview-tx", "marshall-tx", "kilgore-tx", "tyler-tx"]) {
+    assert.match(sitemap, new RegExp(`https://www\\.lonestartotalwash\\.com/service-areas/${city}/`));
+  }
+  assert.match(sitemap, /<lastmod>2026-09-24<\/lastmod>/);
+});
+
+test("local landing pages contain service, breadcrumb, and FAQ structured data", async () => {
+  const html = await readFile(new URL("../dist/service-areas/longview-tx/index.html", import.meta.url), "utf8");
+  const blocks = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)].map((match) => JSON.parse(match[1]));
+  assert.ok(blocks.some((item) => item["@type"] === "Service"));
+  assert.ok(blocks.some((item) => item["@type"] === "BreadcrumbList"));
+  assert.ok(blocks.some((item) => item["@type"] === "FAQPage"));
 });
 
 test("generated internal links and media targets exist", async () => {

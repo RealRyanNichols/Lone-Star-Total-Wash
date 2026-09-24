@@ -98,6 +98,84 @@ export const services = [
   },
 ];
 
+export const areaLandingPages = [
+  {
+    slug: "hallsville-tx",
+    name: "Hallsville",
+    image: "/images/jobs/tx-27.jpg",
+    description: "Hallsville mobile fleet and pressure washing for trucks, equipment, commercial property, concrete, and homes. See real work and get a free quote.",
+    lead: "Lone Star Total Wash is based in Hallsville and brings mobile washing to local yards, job sites, businesses, and homes. The goal is simple: confirm the real scope, show the base pricing, and give you a direct next step with Travis.",
+    planning: "Hallsville is the home base, but every job still starts with the address and work area. Access, equipment count, surface condition, water, drainage, and the requested service window determine what belongs in the written estimate.",
+    focus: "Local fleet and property work without the runaround",
+    audiences: ["Commercial trucks, trailers, and service vehicles", "Excavators, skid steers, dump trucks, and job-site equipment", "Storefronts, concrete, walkways, and exterior work areas", "Driveways, patios, brick, and residential exteriors"],
+    faq: [
+      ["Is Lone Star Total Wash based in Hallsville?", "Yes. Lone Star Total Wash is Hallsville-based and provides mobile washing for approved commercial, fleet, equipment, and residential jobs across East Texas."],
+      ["Can I get a Hallsville quote without knowing the square footage?", "Yes. Send the address, photos, and a plain description of the area or equipment. Travis will tell you what can be priced from those details and what needs an on-site look."],
+      ["Do you offer recurring Hallsville fleet or property washing?", "Recurring schedules may be available. The written quote confirms the service frequency, unit count or work area, access window, and the conditions that apply."],
+    ],
+  },
+  {
+    slug: "longview-tx",
+    name: "Longview",
+    image: "/images/jobs/tx-14.jpg",
+    description: "Mobile fleet and pressure washing in Longview, TX for commercial property, trucks, equipment, concrete, and homes. Request a free written quote.",
+    lead: "Longview quote requests can range from a few work trucks to a storefront, equipment yard, driveway, or recurring commercial schedule. Lone Star Total Wash brings the wash to the approved site and plans the work around access and operating hours.",
+    planning: "For a useful Longview estimate, send the location, unit count or approximate square footage, photos of the normal buildup, and the hours the site is available. That gives Travis enough detail to separate a quick quote from a job that needs a walk-through.",
+    focus: "Commercial sites, working fleets, and property exteriors",
+    audiences: ["Fleet yards, delivery vehicles, semis, buses, and service trucks", "Storefront entrances, sidewalks, parking areas, and dumpster pads", "Construction and heavy equipment at approved yards or job sites", "Driveways, patios, walkways, brick, and home exteriors"],
+    faq: [
+      ["Can commercial washing in Longview be scheduled after hours?", "After-hours and weekend scheduling may be available when the site, lighting, access, noise, drainage, and reopening time allow it. The estimate confirms the operating window."],
+      ["Can you quote multiple Longview fleet units together?", "Yes. Send the number and type of units, where they park, and when they are normally back at the yard. Published base prices provide a starting point."],
+      ["Do you provide one-time and recurring service in Longview?", "Both can be quoted. Recurring work requires a written service agreement and an approved weekly, monthly, quarterly, or seasonal schedule."],
+    ],
+  },
+  {
+    slug: "marshall-tx",
+    name: "Marshall",
+    image: "/images/jobs/tx-21.jpg",
+    description: "Marshall, TX mobile fleet and pressure washing for trucks, equipment, storefronts, concrete, and residential property. See pricing and request a quote.",
+    lead: "Lone Star Total Wash reviews Marshall jobs for mobile fleet washing, heavy-equipment cleanup, commercial exterior work, and residential pressure washing. Customers see real completed work and published base rates before asking for a quote.",
+    planning: "A Marshall quote should identify what is being washed, where it will be parked or staged, and the best service window. For property work, include the surfaces, approximate size, access points, water, drainage, and anything that must stay open during the job.",
+    focus: "Truck, equipment, commercial, and residential washing",
+    audiences: ["Semis, trailers, tankers, vans, and company vehicles", "Heavy machinery and contractor equipment", "Commercial entries, flat work, brick, and exterior surfaces", "Residential concrete, patios, walks, porches, and exteriors"],
+    faq: [
+      ["Does Lone Star Total Wash travel to Marshall?", "Marshall is listed in the East Texas service area. Send the exact address and scope so Travis can confirm the current route, travel, and scheduling options."],
+      ["What should I send for a Marshall equipment-washing quote?", "Include the machine type, quantity, job or yard location, photos of the buildup, access conditions, and the preferred day or service window."],
+      ["Are Marshall quotes free?", "Yes. Quote requests are free and carry no obligation. Final pricing depends on the written scope and the actual site or equipment conditions."],
+    ],
+  },
+  {
+    slug: "kilgore-tx",
+    name: "Kilgore",
+    image: "/images/jobs/tx-30.jpg",
+    description: "Kilgore mobile fleet, heavy-equipment, commercial, and residential pressure washing. Review real East Texas work and request a free quote.",
+    lead: "Kilgore contractors, fleet operators, property managers, and homeowners can request mobile washing without sending equipment across town. Lone Star Total Wash reviews the site and work window before confirming the written scope.",
+    planning: "Equipment and work fleets need more than a generic per-hour promise. Send the unit mix, parking or staging plan, normal buildup, sensitive areas, access, and the time the equipment is actually available. Property quotes should include photos and approximate measurements when possible.",
+    focus: "Heavy equipment, fleet yards, and exterior property work",
+    audiences: ["Excavators, skid steers, dump trucks, and contractor machinery", "Service fleets, pickups, trailers, and commercial vehicles", "Parking areas, sidewalks, building exteriors, and work zones", "Residential drives, patios, brick, and outdoor surfaces"],
+    faq: [
+      ["Can heavy equipment be washed at a Kilgore job site?", "Sometimes. The site must have safe access and an approved work area. The quote reviews drainage, utilities, operating traffic, and equipment placement before a date is accepted."],
+      ["How is heavy-equipment washing priced?", "The website publishes an hourly base rate. The final estimate confirms machine size, buildup, access, travel, water, and site-specific requirements."],
+      ["Can a Kilgore fleet set a recurring schedule?", "Yes, when the route and operating window fit. Send the unit count, return-to-yard timing, and desired frequency so the schedule can be reviewed."],
+    ],
+  },
+  {
+    slug: "tyler-tx",
+    name: "Tyler",
+    image: "/images/jobs/tx-18.jpg",
+    description: "Tyler, TX mobile fleet and pressure washing for approved commercial, equipment, concrete, and residential jobs. Send the location for a free quote.",
+    lead: "Tyler jobs are reviewed by location, scope, route, and schedule before a service date is accepted. That protects the customer from a vague estimate and gives Travis the information needed to say exactly what can be handled.",
+    planning: "Start with the Tyler address, photos, equipment count or approximate work area, and preferred timing. Because this is a mobile service based in Hallsville, the quote confirms travel and site logistics along with the washing scope.",
+    focus: "Route-confirmed mobile washing with a written scope",
+    audiences: ["Commercial vehicles and multi-unit fleet requests", "Storefronts, sidewalks, concrete, and exterior work areas", "Heavy equipment at accessible yards or approved sites", "Driveways, patios, walkways, brick, and home exteriors"],
+    faq: [
+      ["Does Lone Star Total Wash serve every Tyler address?", "Tyler is in the listed service area, but each request is reviewed for the exact location, route, job size, and schedule before service is confirmed."],
+      ["What makes a Tyler quote faster?", "Send clear photos, the address, approximate square footage or unit count, surface or equipment type, and the days or hours the site is available."],
+      ["Is there an obligation after requesting a Tyler quote?", "No. The quote request is free. You can review the written scope, price, and proposed schedule before deciding whether to book."],
+    ],
+  },
+];
+
 export const fleetPrices = [
   ["Semis", "$38.50"],
   ["Trailers", "$44"],

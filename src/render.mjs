@@ -80,8 +80,42 @@ function localBusinessSchema() {
     },
     areaServed: site.areas.slice(0, -1).map((name) => ({ "@type": "City", name })),
     sameAs: [site.facebook, site.tiktok],
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: site.phoneHref,
+      contactType: "customer service",
+      areaServed: "US-TX",
+      availableLanguage: "English",
+    },
     priceRange: "$$",
     paymentAccepted: "Cash, credit card, check, Cash App, Venmo",
+  };
+}
+
+function websiteSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${site.url}/#website`,
+    url: `${site.url}/`,
+    name: site.name,
+    publisher: { "@id": `${site.url}/#business` },
+    inLanguage: "en-US",
+  };
+}
+
+function webPageSchema({ canonical, title, description, image }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${canonical}#webpage`,
+    url: canonical,
+    name: title,
+    description,
+    isPartOf: { "@id": `${site.url}/#website` },
+    about: { "@id": `${site.url}/#business` },
+    primaryImageOfPage: { "@type": "ImageObject", url: `${site.url}${image}` },
+    inLanguage: "en-US",
   };
 }
 
@@ -109,9 +143,9 @@ function footer() {
   return `<footer class="site-footer"><div class="container footer-grid"><div><a class="brand brand--footer" href="/"><img src="/images/brand/logo.png" width="72" height="72" alt=""/><span><strong>Lone Star</strong><small>Total Wash</small></span></a><p>Mobile fleet and pressure washing based in Hallsville, Texas, serving East Texas.</p><p class="footer-proof">Fully insured. We come to you.</p></div><div><h2>Services</h2><ul><li><a href="/services/fleet-washing/">Fleet washing</a></li><li><a href="/services/heavy-equipment-washing/">Heavy equipment</a></li><li><a href="/services/commercial-pressure-washing/">Commercial property</a></li><li><a href="/services/residential-pressure-washing/">Residential property</a></li></ul></div><div><h2>Plan the job</h2><ul><li><a href="/pricing/">Published base prices</a></li><li><a href="/work/">Completed work</a></li><li><a href="/service-areas/">Service area</a></li><li><a href="/guides/">Practical guides</a></li></ul></div><div><h2>Talk to Travis</h2><a class="footer-phone" href="tel:${site.phoneHref}">${site.phoneDisplay}</a><p>Call or text for a free quote.</p><div class="footer-social"><a href="${site.facebook}" target="_blank" rel="noopener">Facebook</a><a href="${site.tiktok}" target="_blank" rel="noopener">TikTok</a></div></div></div><div class="container footer-bottom"><p>© 2026 Lone Star Total Wash. All rights reserved.</p><p>All work is subject to a written scope and contractor service agreement.</p></div></footer><div class="mobile-actions"><a href="tel:${site.phoneHref}">${icon("phone")} Call Travis</a><a href="/quote/">Free Quote ${icon("arrow")}</a></div>`;
 }
 
-export function page({ title, description, path = "/", body, image = "/images/jobs/tx-27.jpg", schema = [], noindex = false }) {
+export function page({ title, description, path = "/", body, image = "/images/jobs/tx-27.jpg", imageAlt = "Lone Star Total Wash mobile washing work in East Texas", schema = [], noindex = false }) {
   const canonical = `${site.url}${path === "/" ? "" : path}`;
-  const schemas = [localBusinessSchema(), ...schema];
+  const schemas = [localBusinessSchema(), websiteSchema(), webPageSchema({ canonical, title, description, image }), ...schema];
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -119,21 +153,26 @@ export function page({ title, description, path = "/", body, image = "/images/jo
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}" />
-  ${noindex ? '<meta name="robots" content="noindex,follow" />' : ""}
+  <meta name="robots" content="${noindex ? "noindex,follow" : "index,follow,max-image-preview:large"}" />
   <link rel="canonical" href="${canonical}" />
   <link rel="icon" href="/images/brand/favicon.png" />
   <link rel="apple-touch-icon" href="/images/brand/favicon.png" />
   <meta name="theme-color" content="#0a2d4f" />
   <meta property="og:type" content="website" />
+  <meta property="og:locale" content="en_US" />
   <meta property="og:site_name" content="${site.name}" />
   <meta property="og:title" content="${escapeHtml(title)}" />
   <meta property="og:description" content="${escapeHtml(description)}" />
   <meta property="og:url" content="${canonical}" />
   <meta property="og:image" content="${site.url}${image}" />
+  <meta property="og:image:alt" content="${escapeHtml(imageAlt)}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="800" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${escapeHtml(title)}" />
   <meta name="twitter:description" content="${escapeHtml(description)}" />
   <meta name="twitter:image" content="${site.url}${image}" />
+  <meta name="twitter:image:alt" content="${escapeHtml(imageAlt)}" />
   <link rel="preload" href="/styles.css" as="style" />
   <link rel="stylesheet" href="/styles.css" />
   ${schemas.map((item) => `<script type="application/ld+json">${JSON.stringify(item).replaceAll("<", "\\u003c")}</script>`).join("\n  ")}

@@ -1,8 +1,8 @@
 import { cp, mkdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { homePage, servicesPage, servicePage, pricingPage, workPage, serviceAreasPage, guidesPage, guidePage, quotePage, privacyPage, notFoundPage } from "../src/pages.mjs";
-import { services, guides, site } from "../src/site.mjs";
+import { homePage, servicesPage, servicePage, pricingPage, workPage, serviceAreasPage, areaLandingPage, guidesPage, guidePage, quotePage, privacyPage, notFoundPage } from "../src/pages.mjs";
+import { services, areaLandingPages, guides, site } from "../src/site.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const dist = join(root, "dist");
@@ -24,6 +24,7 @@ const pages = new Map([
 ]);
 
 for (const service of services) pages.set(`/services/${service.slug}/`, servicePage(service));
+for (const area of areaLandingPages) pages.set(`/service-areas/${area.slug}/`, areaLandingPage(area));
 for (const guide of guides) pages.set(`/guides/${guide.slug}/`, guidePage(guide));
 
 for (const [route, html] of pages) {
@@ -33,9 +34,10 @@ for (const [route, html] of pages) {
 }
 
 const sitemapRoutes = [...pages.keys()].filter((route) => route !== "/404/");
+const lastModified = "2026-09-24";
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sitemapRoutes.map((route) => `  <url><loc>${site.url}${route === "/" ? "/" : route}</loc><changefreq>${route.startsWith("/guides/") ? "monthly" : "weekly"}</changefreq><priority>${route === "/" ? "1.0" : route === "/quote/" ? "0.9" : "0.8"}</priority></url>`).join("\n")}
+${sitemapRoutes.map((route) => `  <url><loc>${site.url}${route === "/" ? "/" : route}</loc><lastmod>${lastModified}</lastmod><changefreq>${route.startsWith("/guides/") ? "monthly" : "weekly"}</changefreq><priority>${route === "/" ? "1.0" : route === "/quote/" || route.startsWith("/service-areas/") ? "0.9" : "0.8"}</priority></url>`).join("\n")}
 </urlset>`;
 
 await writeFile(join(dist, "sitemap.xml"), sitemap);
