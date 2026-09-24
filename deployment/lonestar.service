@@ -1,0 +1,25 @@
+[Unit]
+Description=Lone Star Total Wash website
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/srv/sites/lonestar
+EnvironmentFile=-/srv/site-env/lonestar.env
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=3107
+ExecStart=/usr/bin/node /srv/sites/lonestar/server.mjs
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/tmp
+
+[Install]
+WantedBy=multi-user.target

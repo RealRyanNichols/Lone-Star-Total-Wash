@@ -1,98 +1,106 @@
 # Lone Star Total Wash
 
-Live site: https://www.lonestartotalwash.com
+Public website and quote intake for Travis Nichols's mobile fleet and pressure-washing business in Hallsville, Texas.
 
-## Read this first
+- Canonical site: <https://www.lonestartotalwash.com>
+- Business phone: `(903) 431-8489`
+- DigitalOcean staging host: <https://lonestar.165-227-248-110.sslip.io>
+- Production process port: `127.0.0.1:3107`
 
-**The original source code for this site no longer exists.**
+## What this repository contains
 
-It was deployed to Vercel from a local folder, never pushed here. Vercel has since
-purged the deployment source blobs. As of 2026-09-19 every file in that deployment
-returns HTTP 410 Gone. The Mac it was built on was searched by filename and by
-content and has no copy.
+The source was rebuilt in September 2026 after the original Next.js source was lost. `recovered-site/` preserves the 2026-09-19 production mirror. The maintainable replacement is the small Node application at the repository root.
 
-What is in this repo is a mirror of the live production site, captured 2026-09-19,
-plus everything needed to rebuild it.
+The replacement includes:
 
-## What the original app was
+- 16 statically generated, mobile-first pages
+- four service-specific search pages
+- an East Texas service-area page
+- a real completed-work gallery using Lone Star Total Wash photos
+- published fleet, equipment, and flat-work base prices
+- three practical search guides
+- LocalBusiness, Service, FAQ, and Article structured data
+- canonical URLs, sitemap, robots file, and legacy URL redirects
+- an accessible quote form with consent, validation, honeypot, origin checks, size limits, and rate limits
+- Supabase lead delivery with a temporary Vercel API fallback
+- optional Resend notifications that do not block lead storage
+- a hardened systemd service and Caddy configs for staging and production
 
-Next.js App Router, static export plus one serverless route. From the surviving
-Vercel file listing:
+No framework or runtime package is required. The generator and web server use Node built-ins so the site is cheap to run and straightforward to recover.
 
-    src/app/page.tsx           home
-    src/app/prices/page.tsx    prices
-    src/app/jobs/page.tsx      jobs
-    src/app/quote/page.tsx     quote form
-    src/app/admin/page.tsx     admin (not public, not captured)
-    src/app/api/quote/route.ts quote handler
-    src/app/layout.tsx
-    src/app/globals.css
-    src/app/robots.ts
-    src/app/sitemap.ts
-    src/lib/config.ts
+## Local development
 
-## recovered-site/
+Requires Node 22 or newer.
 
-Complete mirror of the public site. 20 files. Pages: index, prices, jobs, quote,
-plus the compiled Next chunks and CSS. This is exactly what visitors see today.
+```bash
+npm run build
+QUOTE_UPSTREAM_URL=https://lone-star-total-wash.vercel.app/api/quote npm start
+```
 
-The admin page was not linked publicly so it was not captured.
+Then open <http://127.0.0.1:3107>.
 
-## The quote form
+Run all checks:
 
-Verified working end to end on 2026-09-19. A test submission was accepted and
-landed in the database with all fields intact, then was deleted.
+```bash
+npm run check
+```
 
-    POST /api/quote
-    required: name, phone
-    optional: email, address, city, services[], message
-    success:  200 {"ok": true}
-    missing:  400 {"error": "Name and phone are required"}
+## Quote delivery
 
-Writes to Supabase project `wtqzielipmbvvarcebws`, table `public.leads`.
+The preferred path writes directly to Supabase table `public.leads` in project `wtqzielipmbvvarcebws` with the public anon key. Never put a Supabase service-role key in this application.
 
-    id uuid pk
-    name text
-    phone text
-    email text
-    address text
-    city text
-    services text[]
-    message text
-    source text default 'website'
-    status text default 'new'
-      check in (new, contacted, estimate_sent, accepted, paid, closed)
-    created_at timestamptz default now()
+During the migration, `QUOTE_UPSTREAM_URL` can forward valid submissions to the existing Vercel route. That fallback keeps the form working during DNS cutover, but it should be removed after direct Supabase delivery and notifications are verified on DigitalOcean.
 
-RLS policies:
+Optional Resend variables send a notification after the lead is saved. A notification failure is logged by request ID only and does not discard the saved lead. Raw quote contents are not written to application logs.
 
-    anon can insert leads            INSERT  anon           with check true
-    authenticated can read leads     SELECT  authenticated  true
-    authenticated can update leads   UPDATE  authenticated  true
+Copy `.env.example` to the protected server environment file and set only the values that are actually used:
 
-Anon insert is allowed, so rebuilding needs only the Supabase URL and the anon
-key. No service role key is required and none should be used here.
+```text
+/srv/site-env/lonestar.env
+```
 
-The Vercel project has **zero environment variables**, so nothing secret was lost
-with the source.
+The file should be owned by root with mode `0600`.
 
-## Two things to know before relaunching
+## DigitalOcean deployment
 
-1. **The leads table has zero rows.** The form works, so this is a traffic problem,
-   not a code problem.
+The existing droplet checkout is `/srv/sites/lonestar`.
 
-2. **Nothing notifies anyone when a lead arrives.** A submission lands in the
-   Supabase table and stops there. There is no email and no text. Someone has to
-   open the database to find out a customer asked for a quote. Wire up a
-   notification before sending any traffic at this form.
+```bash
+cd /srv/sites/lonestar
+git fetch origin
+git switch main
+git pull --ff-only origin main
+npm run build
+sudo cp deployment/lonestar.service /etc/systemd/system/lonestar.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now lonestar.service
+sudo cp deployment/lonestar.staging.caddy /etc/caddy/sites/lonestar.caddy
+sudo caddy validate --config /etc/caddy/Caddyfile
+sudo systemctl reload caddy
+curl -fsS https://lonestar.165-227-248-110.sslip.io/api/health
+```
 
-## Assets
+Do not copy the production Caddy file until staging pages, the quote delivery path, and notification delivery have all passed.
 
-The logo is served from that Supabase project's public storage bucket:
+## Production cutover gates
 
-    /storage/v1/object/public/assets/logo.png
+These are separate completion gates:
 
-## Lesson
+1. The build passes locally and on the droplet.
+2. The systemd process is active on port 3107.
+3. The staging hostname returns the rebuilt site over HTTPS.
+4. A controlled quote reaches the intended Supabase table.
+5. The owner notification reaches the intended inbox or phone workflow.
+6. Existing domain DNS is changed from Vercel to the DigitalOcean reserved IP `165.227.248.110`.
+7. The production Caddy config obtains valid certificates for both apex and `www`.
+8. Canonical pages, old URL redirects, sitemap, robots, structured data, images, call links, and quote form are verified on the public domain.
+9. Search Console receives the canonical sitemap and indexing is checked separately.
+10. Vercel is left available for rollback until the DigitalOcean site has remained healthy through the agreed observation window.
 
-Vercel keeps the build, not the source. Any site whose only copy is a Vercel
-deployment is one retention window away from gone.
+## Data and copy guardrails
+
+- Do not put customer contact details in logs, URLs, analytics events, or public pages.
+- Do not add a street address unless Travis confirms it is a public business location.
+- Do not claim rankings, guaranteed leads, guaranteed results, certifications, or environmental compliance without current support.
+- Keep final prices in a written estimate. The published page contains base rates and the conditions that may change an estimate.
+- Use completed work from this repository as proof. Do not substitute stock images for client results.
